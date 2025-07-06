@@ -1,8 +1,12 @@
 {
   "rewrites": [
-    { "source": "/transactions", "destination": "/api/transactions" }
-  ],
-  "routes": [
-    { "src": "/storybook", "dest": "/storybook-static/index.html" }
+    {
+      "source": "/transactions",
+      "destination": "/api/transactions"
+    },
+    {
+      "source": "/storybook",
+      "destination": "/storybook-static/index.html"
+    }
   ]
 }
