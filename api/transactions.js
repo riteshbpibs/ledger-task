@@ -1,4 +1,3 @@
-
 export const config = {
   runtime: 'edge',
 }
@@ -14,7 +13,11 @@ export default async function handler(req) {
 
   if (req.method === 'POST') {
     const body = await req.json()
-    const newTx = { id: crypto.randomUUID(), date: new Date().toISOString().split('T')[0], ...body }
+    const newTx = {
+      id: crypto.randomUUID(),
+      date: new Date().toISOString().split('T')[0],
+      ...body,
+    }
     transactions.push(newTx)
     return new Response(JSON.stringify(newTx), {
       status: 201,
