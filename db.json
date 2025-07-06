@@ -1,0 +1,27 @@
+{
+  "transactions": [
+    {
+      "id": "1",
+      "date": "2025-07-05",
+      "description": "Lunch",
+      "debitAccount": "Food",
+      "creditAccount": "Cash",
+      "amount": 15
+    },
+    {
+      "id": "d407",
+      "description": "Lunch at Cafe",
+      "debitAccount": "Food",
+      "creditAccount": "Cash",
+      "amount": 5
+    },
+    {
+      "id": "bbc3",
+      "date": "2025-07-05",
+      "description": "Dinner at Cafe",
+      "debitAccount": "Food",
+      "creditAccount": "Cash",
+      "amount": 10
+    }
+  ]
+}

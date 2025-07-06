@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: Ledger API
+  version: 1.0.0
+paths:
+  /transactions:
+    get:
+      summary: Get Transactions
+      responses:
+        "200":
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+    post:
+      summary: Create Transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewTransaction"
+      responses:
+        "201":
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+        debitAccount:
+          type: string
+        creditAccount:
+          type: string
+        amount:
+          type: number
+    NewTransaction:
+      type: object
+      properties:
+        description:
+          type: string
+        debitAccount:
+          type: string
+        creditAccount:
+          type: string
+        amount:
+          type: number
