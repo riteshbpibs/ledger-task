@@ -1,216 +1,126 @@
-# 🧾 Double Entry Ledger – Frontend Assignment
+# Double Entry Ledger – Frontend Assignment
 
-A modern, type-safe ledger app built with **React**, **TypeScript**, **TailwindCSS**, and **ShadCN UI**. It showcases API integration using **Orval** from an OpenAPI specification, with features like optimistic updates, account balances, form validation, and a clean component architecture.
+## Summary
 
----
-
-## 📦 Tech Stack
-
-| Layer            | Tooling                          |
-| ---------------- | -------------------------------- |
-| UI               | React, TailwindCSS, ShadCN UI    |
-| State/Network    | SWR, Axios                       |
-| Forms/Validation | react-hook-form + Zod            |
-| API Client       | Orval (OpenAPI → hooks & models) |
-| Tooling          | Vite, Vitest, Storybook, Sonner  |
-| Mock API         | json-server                      |
+This is a React + TypeScript web application that functions as a simple double-entry ledger. Users can record transactions, view a live transaction table, and track account balances in real-time. The application uses a mock backend and a fully type-safe, auto-generated API client from an OpenAPI specification. It supports light/dark themes, optimistic UI updates, and is deployed on Vercel with Storybook and component testing.
 
 ---
 
-## 🗂️ Folder Structure
+## Tech Stack
+
+- **Framework:** React, Vite
+- **Styling:** Tailwind CSS, ShadCN UI
+- **Data Fetching:** SWR
+- **Form Validation:** React Hook Form + Zod
+- **API Layer:** Orval (OpenAPI to hooks)
+- **Mock API:** json-server or Vercel Edge Function
+- **Tooling:** TypeScript, Vitest, Storybook, Sonner
+- **Deployment:** Vercel
+
+---
+
+## Folder Structure
 
 ```
-src/
-├── api/                       # Orval-generated hooks + types
-│   ├── ledger-api.ts         # useGetTransactions, usePostTransactions
-│   └── model/                # Transaction & NewTransaction types
-├── components/               # UI components
-│   ├── TransactionRow.tsx
-│   ├── AccountBalances.tsx
-│   ├── TransactionForm.tsx
-│   └── __stories__/          # Storybook stories
-├── App.tsx                   # Main page layout
-├── main.tsx                  # Root renderer with ThemeProvider
-├── index.css                 # Tailwind base styles
-└── lib/utils.ts              # Utility functions (e.g., `cn`)
-```
-
----
-
-## 🛠️ Architecture & Code Flow
-
-### 1. 🔌 API Integration (via Orval)
-
-- The `ledger-api.yaml` OpenAPI file defines the backend contract.
-- Orval uses this file to generate:
-  - `useGetTransactions()` → fetch all transactions
-  - `usePostTransactions()` → create a transaction
-  - TypeScript interfaces for `Transaction` and `NewTransaction`
-
-✅ Result: You never write manual API calls or types — it's all safe and automatic.
-
----
-
-### 2. 📄 Component Overview
-
-#### ✅ `TransactionRow.tsx`
-
-- Renders one transaction row (date, description, debit, credit, amount).
-
-#### ✅ `AccountBalances.tsx`
-
-- Takes a list of transactions and calculates balances per account.
-- Balances update dynamically as you add new entries.
-
-#### ✅ `TransactionForm.tsx`
-
-- Uses `react-hook-form` with Zod validation.
-- Includes date picker (ShadCN Calendar + Popover).
-- On submit:
-  - Optimistically updates `/transactions` cache
-  - Triggers mutation
-  - Displays toast via Sonner
-
-#### ✅ `App.tsx`
-
-- Main entry point.
-- Renders:
-  - Header
-  - Transactions Table
-  - Account Balances
-  - Transaction Form
-
----
-
-## 🧪 Validation & Optimistic UX
-
-- Uses `Zod` to validate form fields:
-  - Required fields
-  - Positive amount
-  - Debit ≠ Credit account
-- Uses `mutate('/transactions', newData, false)` before API call
-- Adds temporary `id` for stable rendering
-- Resets form on success
-
----
-
-## 💡 Light/Dark Mode
-
-- Implemented via `next-themes` + Tailwind `dark:` class strategy
-- Toggle button switches themes and persists in localStorage
-- ShadCN UI auto-adapts to theme
-
----
-
-## 🧪 Testing
-
-- Testing setup via **Vitest** and **Testing Library**
-- Test files for:
-  - `TransactionRow`
-  - `AccountBalances`
-- Run tests:
-
-```bash
-npx vitest
+ledger-app/
+├── api/                       # Vercel Edge Function backend (api/transactions.js)
+├── src/
+│   ├── api/                  # Orval-generated hooks + types
+│   │   ├── ledger-api.ts
+│   │   └── model/            # Transaction & NewTransaction types
+│   ├── components/           # UI components
+│   │   ├── TransactionRow.tsx
+│   │   ├── AccountBalances.tsx
+│   │   ├── TransactionForm.tsx
+│   │   └── __stories__/      # Storybook stories
+│   ├── App.tsx               # Main app layout
+│   ├── main.tsx              # App entry point
+│   ├── index.css             # Tailwind base styles
+│   └── lib/utils.ts          # Utility helpers
+├── storybook-static/         # Storybook build (optional)
+├── ledger-api.yaml           # OpenAPI spec
+├── vercel.json               # Deployment config with rewrites
+├── tsconfig.json             # TypeScript config
+└── .prettierrc               # Code formatting rules
 ```
 
 ---
 
-## 📚 Storybook
+## Product Flow
 
-- Visual testing for each component
-- Files in `src/components/__stories__/`
-- Run Storybook:
-
-```bash
-npm run storybook
-```
-
----
-
-## 🔄 Mock API Setup
-
-We use `json-server` to simulate the API defined in `ledger-api.yaml`.
-
-### ➕ Add `db.json`
-
-```json
-{
-  "transactions": []
-}
-```
-
-### 🚀 Start the mock server:
-
-```bash
-npx json-server --watch db.json --port 3001
-```
-
-### 🔁 Proxy API calls in Vite:
-
-```ts
-// vite.config.ts
-export default defineConfig({
-  server: {
-    proxy: {
-      "/transactions": "http://localhost:3001",
-    },
-  },
-});
-```
-
----
-
-## 🧾 Product Flow
-
-1. User lands on the page
-2. `useGetTransactions` fetches existing transactions
-3. UI renders table + account balances
-4. User fills the form:
-   - Picks date
-   - Enters description, debit, credit, amount
+1. The app loads and fetches existing transactions using `useGetTransactions()`.
+2. All transactions are displayed in a responsive table.
+3. Account balances are calculated on the fly by processing each transaction.
+4. The user fills out the form with description, debit, credit, amount, and date.
 5. On submit:
-   - Optimistically adds to SWR cache
-   - Triggers API call to POST `/transactions`
-   - Shows success or failure toast
-6. Account balances and table update immediately
+   - Zod validates the input
+   - Optimistic update adds the transaction to the UI
+   - The API call is made to `/transactions` (Edge Function)
+   - On success: form resets and toast is shown
+6. The account balances and transaction list update immediately
 
 ---
 
-## 🚀 Deployment
+## Architecture
 
-This app is deployed via **Vercel**.
+- **API Contract-Driven**: Orval consumes `ledger-api.yaml` and generates:
+  - SWR-based hooks
+  - Axios calls
+  - TypeScript-safe models
 
-Live Demo: [https://your-vercel-url.vercel.app](https://your-vercel-url.vercel.app)
+- **Component-Driven UI**: All features are split into independent components:
+  - `TransactionForm`: Handles input and validation
+  - `TransactionRow`: Renders each transaction
+  - `AccountBalances`: Computes balance based on debit/credit logic
 
----
+- **Optimistic UX**: Uses `mutate('/transactions', newData, false)` to update cache immediately
 
-## 🤝 Contribution & Credits
+- **Theme Provider**: Supports light/dark theme toggle using `next-themes`
 
-This project was built as part of a **Senior Frontend Engineer Assignment**, demonstrating:
-
-- API-first dev using OpenAPI
-- Real-world React architecture
-- Clean component design
-- Form validation + optimistic UX
-- Mocked backend + testable UI
-
----
-
-## ✅ Final Checklist
-
-- [x] Transaction table
-- [x] Account balance calculations
-- [x] Validated transaction form
-- [x] Optimistic updates with SWR
-- [x] OpenAPI-driven client via Orval
-- [x] Light/Dark mode with ShadCN
-- [x] Component tests + Storybook
-- [x] Local mock API
-- [x] Vercel deployment
+- **Mock Backend**: Uses `api/transactions.js` to simulate GET/POST endpoints in Vercel
 
 ---
 
-Feel free to clone this repo, study the architecture, and build on it ✨
+## Design Decisions
 
-> Built with care and clarity to be readable for both juniors and seniors 🧠
+- **Orval for API Layer**: Ensures 100% type safety and removes manual API code
+- **SWR over React Query**: Lightweight and good enough for this use case
+- **ShadCN UI**: Delivers polished accessible components with Tailwind support
+- **Zod with Transform**: Handles both form validation and type transformation (e.g. date → string)
+- **Optimistic Updates**: Deliberately chosen for better UX even with mock API
+- **Mock Server via Edge Function**: Easy to deploy, no backend required
+
+---
+
+## CI/CD (Vercel)
+
+- Automatically deploys on push to `main` via GitHub integration
+- `vercel.json` handles rewrites:
+  - `/transactions` → `/api/transactions`
+  - `/storybook` → `/storybook-static/index.html`
+- Storybook is statically built using:
+  ```bash
+  npm run storybook:build
+  ```
+  And included in the deployed output for previewing components
+
+---
+
+## Others
+
+- **Testing**: Unit tests with Vitest + Testing Library for key components
+- **Prettier**: Enforced via `.prettierrc` with formatting script
+- **README**: Designed to be beginner-friendly and interviewer-ready
+- **Live URL**: Hosted on Vercel with working backend and mock transactions
+
+---
+
+This project is designed to demonstrate frontend engineering skills including:
+- Component design
+- Typed API integration
+- Form validation
+- Optimistic UX
+- Deployment pipelines
+- Readable, testable code
+
+It serves as a showcase for contract-driven frontend development with modern tooling.
